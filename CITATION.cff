@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the paper."
+title: "Interrupted Patterns on an Ordinal Alphabet: Minimal Markov Chain Embeddings and Exact Distributions — replication code"
+type: software
+license: MIT
+authors:
+  - family-names: Patil
+    given-names: Manoj Chaitram
+    affiliation: "Department of Statistics, Kavayitri Bahinabai Chaudhari North Maharashtra University, Jalgaon, Maharashtra, India"
+    email: manojcpatil@gmail.com
+repository-code: "https://github.com/manojcpatil/interrupted-degradation"
+keywords:
+  - finite Markov chain embedding
+  - minimal embedding
+  - runs and patterns
+  - interrupted patterns
+  - ordinal alphabet
+  - multi-state trials
+  - exact distributions
