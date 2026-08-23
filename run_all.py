@@ -6,9 +6,11 @@ Regenerate every table and figure in the manuscript.
     python run_all.py            full run (10^6 simulated paths)
     python run_all.py --quick    fast pass for a smoke test
 
-Tables land in ../Tables, figures in ../Figures, data and logs in ../Output.
-The manuscript reads them with \\input{Tables/...} and \\graphicspath{{Figures/}},
-so recompiling after a run picks up the new numbers.
+Tables land in Tables/, figures in Figures/, data and logs in Output/, resolved
+by common.ROOT: beside the manuscript when these scripts sit in "Python Codes/",
+and beside the scripts themselves in the flat repository layout. The manuscript
+reads them with \\input{Tables/...} and \\graphicspath{{Figures/}}, so recompiling
+after a run picks up the new numbers.
 """
 
 from __future__ import annotations
@@ -19,7 +21,7 @@ import sys
 import traceback
 from contextlib import redirect_stdout
 
-from common import banner, write_output
+from common import ROOT, banner, write_output
 
 STEPS = [
     ("code_01_matrices", "embedded dimensions and the appendix matrices"),
@@ -63,7 +65,7 @@ def main(quick=False):
         print("  failed: %s" % ", ".join(failures))
         return 1
     print("  all %d steps completed" % len(STEPS))
-    print("  tables -> ../Tables, figures -> ../Figures, data -> ../Output")
+    print("  output written under %s" % ROOT)
     return 0
 
 
