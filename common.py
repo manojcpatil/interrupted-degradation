@@ -4,12 +4,19 @@ common.py
 Paths, LaTeX writers and the environment stamp shared by the `code_*.py`
 scripts in this folder.
 
-Layout assumed, relative to ConditionalPGF_Paper/:
+Two layouts are supported. Beside the manuscript, the scripts sit in their own
+folder and write to its siblings:
 
-    Python Codes/   this folder
-    Tables/         generated LaTeX fragments, read by the manuscript
-    Figures/        generated PNG figures
-    Output/         CSV data and logs
+    ConditionalPGF_Paper/
+        main.tex
+        Python Codes/   this folder
+        Tables/         generated LaTeX fragments, read by the manuscript
+        Figures/        generated PNG figures
+        Output/         CSV data and logs
+
+In the code repository the scripts sit at the top level, and the same three
+directories are created beside them. `ROOT` below resolves whichever applies, so
+neither layout needs the scripts edited.
 """
 
 from __future__ import annotations
@@ -21,7 +28,13 @@ import sys
 from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+
+# Beside the manuscript the generated directories are siblings of this folder;
+# in the flat repository layout they are siblings of the scripts themselves.
+# The manuscript is what distinguishes the two.
+_PARENT = os.path.dirname(HERE)
+ROOT = _PARENT if os.path.isfile(os.path.join(_PARENT, "main.tex")) else HERE
+
 TABLES = os.path.join(ROOT, "Tables")
 FIGURES = os.path.join(ROOT, "Figures")
 OUTPUT = os.path.join(ROOT, "Output")
