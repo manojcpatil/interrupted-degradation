@@ -77,6 +77,15 @@ def bruteforce(n=BF_N, p2=BF_P2, grid=((2, 1), (3, 2))):
 
 
 def batch_seeds(master, batches=BATCHES):
+    """Independent batch seeds.
+
+    `master` may be a single integer or a sequence of integers. Passing the
+    test index alongside the master seed gives every (family, profile) pair its
+    own independent stream while keeping the whole design reproducible from one
+    recorded number. That independence is what lets the per-test chi-square
+    statistics be pooled: summing them, and summing their degrees of freedom,
+    is only valid for independent components.
+    """
     ss = np.random.SeedSequence(master)
     return [int(s.generate_state(1)[0]) for s in ss.spawn(batches)]
 
@@ -111,14 +120,15 @@ def monte_carlo(trials=1_000_000, seed=20260820):
     rows, x2_tot, df_tot = [], 0.0, 0
     print("  %-4s %4s %11s %11s %9s %8s"
           % ("fam", "p2", "E[N] exact", "E[N] sim", "max |z|", "X2/df"))
-    for family in E.FAMILIES:
-        for p2 in MC_P2S:
+    for fi, family in enumerate(E.FAMILIES):
+        for pi, p2 in enumerate(MC_P2S):
             p = E.symmetric_p(p2)
             f = E.pmf(MC_N, family, MC_K, MC_R, p)
             mu, _ = E.pmf_moments(f)
             hist = None
             means = []
-            for sd in batch_seeds(seed):
+            # A distinct stream per (family, profile): see batch_seeds.
+            for sd in batch_seeds([seed, fi, pi]):
                 sim = E.simulate_vectorised(MC_N, family, MC_K, MC_R, p,
                                             per, sd)
                 h = np.bincount(sim).astype(np.int64)
@@ -182,7 +192,8 @@ def main(trials=1_000_000, seed=20260820):
     write_table("tab_verify.tex", latex_table(
         caption=("Exact distributions against simulation at $n=%d$, $k=%d$, "
                  "$r=%d$, with $p_0=p_1=(1-p_2)/2$. The run is $%s$ paths in "
-                 "$%d$ batches of $%s$, seeded from a master seed of $%d$. "
+                 "$%d$ batches of $%s$. Every family and profile draws its own "
+                 "independent stream, all spawned from a master seed of $%d$. "
                  "Simulated paths are counted by the scanner of "
                  "Algorithm~\\ref{alg:scan}, which never touches "
                  "$\\boldsymbol{A}_t$ or $\\boldsymbol{B}_t$."
